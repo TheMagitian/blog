@@ -1,0 +1,6 @@
+[submodule "mgtnblog/themes/terminal"]
+	path = mgtnblog/themes/terminal
+	url = https://github.com/panr/hugo-theme-terminal
+[submodule "mgtnblog/public"]
+	path = mgtnblog/public
+	url = https://github.com/themagitian/themagitian.github.io.git

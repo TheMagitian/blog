@@ -1,0 +1,13 @@
+baseURL = 'https://themagitian.github.io/'
+languageCode = 'en-us'
+paginatePath = "page"
+showMenuItems = 0
+theme = "terminal"
+[params]
+  themeColor = "red"
+  # fullWidthTheme = true
+  centerTheme = true
+  
+[params.logo]
+   logoText = "Magitian's blog"
+   logoHomeLink = "/"
