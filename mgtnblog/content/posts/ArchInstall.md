@@ -1,7 +1,7 @@
 +++
 title = "Arch Linux installation"
 date = "2023-11-07T22:18:18+05:30"
-author = ""
+author = "Srinath Anand"
 authorTwitter = "" #do not include @
 cover = ""
 tags = ["Arch", "Linux"]
@@ -15,7 +15,7 @@ color = "" #color from the theme settings
 
 ## What is Arch Linux?
 
-![](/archlinux-banner.png)
+![](/ArchInstall/archlinux-banner.png)
 
 _Arch Linux_ is an independent **GNU/Linux** distribution that embraces the _KISS_ philosophy - Keep It Simple, Stupid. It is a **rolling-release** Linux distro (short for _distribution_), meaning software receive updates almost as soon as developers release them.
 
@@ -63,7 +63,7 @@ Congratulations! You've created a working Linux "disk" that can be used to insta
 
 7) After the selection, messages about services would appear on the screen. A "Welcome to Arch Linux!" message indicates that the device contains a valid image; after some time, a prompt saying `root@archiso` should appear.
 
-![Ignore the kernel version here](/image-2.png)
+![Ignore the kernel version here](/ArchInstall/image-2.png)
 
 8) **Connecting to Internet (Wi-fi)**:
 
@@ -89,7 +89,7 @@ Connect to the network named *NAME* with:
 station wlan0 connect NAME
 ```
 
-![Connecting to a network named NAME](/1.jpg)
+![Connecting to a network named NAME](/ArchInstall/1.jpg)
 
 `iwctl` should ask for the network password. Once provided correctly, Internet connection is established.
 
@@ -129,7 +129,7 @@ So,
 
 Use the command `lsblk` to verify all storage devices. Use `cfdisk DEVICE` to check the partitions per device.
 
-![](/3.jpg)
+![](/ArchInstall/3.jpg)
 
 You can observe that `sda1` is the _EFI bootloader partition_, and `sda2` is the root partition, based on their sizes. Ignore the device listed at the end (in this case, `sdb`), as it's usually the details of the USB drive.
 
@@ -144,7 +144,7 @@ Navigate to the `Free space` entry using arrow keys. In the free space allocated
 Based on where you allocated space for the boot partition on Windows (on `/dev/sda` or on `/dev/sdb`), repeat the process to create an `UEFI/BIOS` partition. Choose _EFI System_ to create one for a UEFI system, and _BIOS boot_ to create a BIOS boot partition.
 
 In this case, the root and _EFI_ boot partitions have  been created on the same `/dev/sda` device.
-![](/2.jpg)
+![](/ArchInstall/2.jpg)
 
 ---
 
@@ -203,7 +203,7 @@ genfstab -U /mnt >> /mnt/etc/fstab
 
 This creates a file system table, and records the output in `/etc/fstab` on the installed OS. This file lets the OS know which device to mount automatically during boot.
 
-![](/4.jpg)
+![](/ArchInstall/4.jpg)
 
 ---
 
@@ -240,7 +240,7 @@ ls /usr/share/zoneinfo/<REGION>/ # REGION is from above.
 # note the city
 ```
 
-![](/5.jpg)
+![](/ArchInstall/5.jpg)
 
 **To synchronise the hardware and software clocks**,
 
@@ -265,7 +265,7 @@ nano /etc/locale.conf
 Uncomment the first line starting with _en\_US.UTF8_ (remove the pound sign at the start of the line), to set your locale to "US English".
 
 
-![](/6.jpg)
+![](/ArchInstall/6.jpg)
 
 Press `Ctrl-S` to save, `Ctrl-x` to exit Nano.
 
@@ -294,7 +294,7 @@ Update to the following:
 
 Replace NAME with the hostname set earlier using `hostnamectl`.
 
-![](/7.jpg)
+![](/ArchInstall/7.jpg)
 In this case, `Arch` is my device's hostname.
 
 ---
@@ -336,7 +336,7 @@ Uncomment the line saying:
 ```conf
 %wheel ALL=(ALL:ALL) ALL
 ```
-![](/8.jpg)
+![](/ArchInstall/8.jpg)
 
 You must now add your user to the _wheel_ users group. 
 Type:
@@ -388,7 +388,7 @@ options root=/dev/sda2 rw
 
 Replace `sda2` with the root partition device installed to.
 
-![](/10.jpg)
+![](/ArchInstall/10.jpg)
 
 Ensure that the networking service autostarts, using `systemctl`:
 

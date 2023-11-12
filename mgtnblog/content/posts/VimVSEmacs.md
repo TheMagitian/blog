@@ -1,7 +1,7 @@
 +++
 title = "Vim VS Emacs"
 date = "2023-11-07T22:27:40+05:30"
-author = ""
+author = "Srinath Anand"
 authorTwitter = "" #do not include @
 cover = ""
 tags = ["Vim", "Emacs"]
@@ -15,7 +15,7 @@ color = "" #color from the theme settings
 
 This is an overview of the two FOSS text editors  - **Vim** (Neovim) and **GNU Emacs**. 
 
-![Editor war meme](https://unkertmedia.com/wp-content/uploads/2022/04/vim-vs-emacs-1024x576.png)
+![](/VimVsEmacs/banner.png "Editor war meme")
 
 The battle between these editors, and as a result, between the fans of the two, has become pervasive in the _free software_ community - it was preceded by the Vim/Emacs battle.  Fans of either editor go to great lengths to establish the supremacy of their editor of choice. This article does not seek to provide _a definitive answer_ about the better of the two - that's the reader's discretion.
 
@@ -46,7 +46,7 @@ The history of Vim is rich, with its origins tracing back to the 1980s. Vim's fo
 ## Neovim
 Neovim, like Vim, is designed to be a terminal-based code editor -  fast and small, which is a key factor in its performance and efficiency. A terminal interface (either a terminal emulator, or the TTY on Linux) is required to run Neovim, although several GUI frontends exist. It's built with a modular architecture, which makes it easier to add new features and improvements. This design also allows for a more powerful plugin architecture, with the ability to manage plugins more efficiently.
 
-![Goneovim, a GUI frontend](https://raw.githubusercontent.com/wiki/akiyosi/goneovim/screenshots/goneovim.png)
+![](/VimVsEmacs/goneovim.png "Goneovim, a GUI frontend")
 
 Neovim's key-based editing is a fundamental aspect of its design philosophy, which is centered around efficient text manipulation. Vim operates in different modes, including "normal mode" for navigating and manipulating text, and "insert mode" for inserting new text. To enter normal mode in Vim, you can press the Esc key on your keyboard, which will allow you to enter commands and navigate the text. There are multiple ways to enter insert mode in Vim, for example, you can press the 'i' key while in normal mode. This will allow you to insert text at the current cursor position
 
@@ -57,7 +57,7 @@ Neovim also offers a more **powerful plugin architecture**. The abundance of _pl
 ## GNU Emacs
 GNU Emacs, on the other hand, is a highly customizable **GUI** text editor that was first implemented at the Artificial Intelligence Laboratory at MIT in 1976. In 1984, Richard Stallman, the main author of the original TECO Emacs, wrote the first GNU Emacs. This version of Emacs was written in the **LISP programming language**, which provided more _extensibility_ than ever before and has been followed by most subsequent versions of Emacs.
 
-![Doom Emacs, an Emacs starter kit](https://raw.githubusercontent.com/doomemacs/doomemacs/screenshots/main.png)
+![](/VimVsEmacs/doom-emacs.png "Doom Emacs")
 
 GNU Emacs uses a system of keymaps to bind keys to commands. Keymaps are data structures that record the bindings between key sequences and command functions. The global keymap is always in effect and defines keys for Fundamental mode, which are common to most or all major modes. Each major or minor mode can have its own keymap which overrides the global definitions of some keys.
 
@@ -116,7 +116,7 @@ GNU Emacs, on the other hand, has several unique features that set it apart from
 
 7. **Colors for Faces**: Emacs allows you to assign various foreground and background colors to "faces". This can greatly enhance the readability and aesthetics of text.
 
-![Different font faces](https://preview.redd.it/6en4usgcyxu21.png?width=640&crop=smart&auto=webp&s=b1fb36c2b240b160b3a9c54c773ab4304c1f3c07)
+![](/VimVsEmacs/doom-emacs-stallman.webp "Doom Emacs - coloured faces")
 
 8. **Org Mode**: Org-mode is a powerful tool for note-taking and documentation. It supports a variety of formats, including plain text, HTML, LaTeX, and more. It also includes features like hyperlinks, tables, and syntax highlighting.
 
@@ -139,6 +139,6 @@ Both editors have their strengths and unique features that can greatly enhance a
 - [psakalo.substack.com](https://psakalo.substack.com/p/my-take-on-neovim-vs-emacs-vs-vs)
 - [Evil mode](https://github.com/emacs-evil/evil)
 - [Org mode](https://orgmode.org)
-- [Treesitter in Neovim](https://github.com/nvim-treesitter/nvim-treesitter/wiki/Gallery)
-- [Fosstodon Doom Emacs](upload://k9TwXyuBWPbQ7qav9IVDspjAbpC.jpeg)
-- [Banner image](upload://h4IG5KMhh5Tqjy21SURUKPdtXHV.png)
+- [Neovim Treesitter - GitHub](https://github.com/nvim-treesitter/nvim-treesitter/wiki/Gallery)
+- [r/unixporn post - ExistentialTowel](https://www.reddit.com/r/unixporn/comments/bi81x6/i3_learning_to_love_emacs/)
+- [Banner image - Unkertmedia.com](https://unkertmedia.com/wp-content/uploads/2022/04/vim-vs-emacs-1024x576.png)

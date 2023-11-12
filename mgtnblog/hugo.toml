@@ -3,6 +3,9 @@ languageCode = 'en-us'
 paginatePath = "page"
 showMenuItems = 0
 theme = "terminal"
+pygmentsUseClasses = true
+pygmentsCodeFences = true
+
 [params]
   themeColor = "red"
   # fullWidthTheme = true

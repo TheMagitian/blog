@@ -1,0 +1,478 @@
+---
+title: "Configuring Emacs"
+date: "2023-11-12T14:10:03+05:30"
+author: "Srinath Anand"
+authorTwitter: "" #do not include @
+cover: ""
+tags: ["Emacs"]
+keywords: ["", ""]
+description: "The first steps of writing your own Emacs config"
+showFullContent: false
+readingTime: false
+hideComments: false
+color: "" #color from the theme settings
+---
+
+* Introduction
+
+This article aims to provide the *essential* steps needed to configure [[https://gnu.org/emacs][GNU Emacs]] on your own to make it a functional *IDE*. This config is inspired by [[https://github.com/doomemacs/doomemacs][Doom Emacs]], a /configuration framework/ for GNU Emacs (Emacs in short).
+
+Emacs is configured via a language called [[https://en.wikipedia.org/wiki/Emacs_Lisp][Emacs Lisp]]. It allows Emacs to be customised to /extreme/ levels. The Emacs Lisp code blocks 
+These blocks should be placed in the file located in *~/.emacs.d/init.el/* on Linux. Windows users may refer to [[https://www.gnu.org/software/emacs/manual/html_node/efaq-w32/Location-of-init-file.html][GNU's manual]].
+
+This config is *declarative*, and the Emacs Lisp packages specified in this file should install automatically after installation.
+
+* Package management
+
+** Setting the package archive
+
+#+begin_src emacs-lisp
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/"))
+#+end_src
+
+** Use-package
+
+[[https://github.com/jwiegley/use-package][Use-package]] is a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Macros.html][macro]] that manages package configuration. It uses the built-in /package.el/, which comes with standard GNU Emacs, as its backend.
+The code snippet given below bootstraps Use-package so that it can install and manage itself.
+
+#+begin_src emacs-lisp
+(unless (package-installed-p 'use-package) (package-install 'use-package)) ; install use-package with package.el
+(require 'use-package-ensure)                                              ; ensure that it installs automatically
+(setq use-package-always-ensure t)
+(require 'use-package)                                                     ; load use-package at Emacs startup
+#+end_src
+
+* Generic preferences
+
+These are generic /tweaks/ that I like better than those in *vanilla* GNU Emacs.
+
+#+begin_src emacs-lisp
+(setq inhibit-splash-screen t) ; disable startup screen
+(menu-bar-mode -1)             ; disable the menu bar below the application window
+(tool-bar-mode -1)             ; disable the Emacs tool bar 
+(scroll-bar-mode -1)           ; disable the scroll bar
+(global-visual-line-mode t)    ; disable visual line mode
+(auto-save-mode nil)           ; don't auto save files by default
+(setq initial-buffer-choice (lambda() (get-buffer "*dashboard*"))) ; so that the Emacsclient window opens up with Dashboard each time 
+(buffer-face-mode 1)           ; so that different fonts can be used on different buffers if needed
+(setq auto-save-default nil)   ; set the default file location of auto-saved files to NIL
+(add-to-list 'load-path (expand-file-name "~/.emacs.d/lisp/"))     ; load all user-defined Emacs Lisp scripts from this directory
+(let ((default-directory  "~/.emacs.d/lisp/")) (normal-top-level-add-to-load-path '("*")))
+(setq use-short-answers t)     ; so that yes/no questions in the minibuffer can be answered using y/n
+(setq-default tab-width 4)     ; make default tab spacing 4
+(delete-selection-mode 1)      ; select text and automatically overwrite without typing backspace
+#+end_src
+
+* Package configuration
+
+Let's use /Use-package/ to manage packages *declaratively*. Here are a few packages I recommend:
+
+** Evil mode
+
+[[https://github.com/emacs-evil/evil][Evil]] is an extensible Vim emulation library for Emacs. It _faithfully_ brings almost the keybindings of the [[https://github.com/vim/vim][Vim]] text editor to Emacs, effectively transforming Emacs into a /modal editor/.
+
+#+begin_src emacs-lisp
+(use-package evil
+  :init (evil-mode 1) ; initialize evil mode 
+  :config (evil-set-undo-system 'undo-redo)) ; set undo-redo mode to evil's 
+
+(require 'evil-vars)
+#+end_src
+
+** Doom Modeline
+
+[[https://github.com/seagle0128/doom-modeline][This]] modeline is the default one used in Doom Emacs. It's /minimalistic/, and includes essential features while appearing *unique*.
+
+#+ATTR_HTML: :title Doom Modeline - https://github.com/seagle0128/doom-modeline
+[[/Emacs-Config/doom-modeline.png]]
+
+#+begin_src emacs-lisp
+(use-package doom-modeline
+  :init
+  (doom-modeline-mode 1)
+  
+  :config
+  (setq doom-modeline-height 25))
+#+end_src
+
+
+** All the icons
+
+[[https://github.com/domtronn/all-the-icons.el][This]] package provides access to a *vast* set of icons from /Github Octicons/, /FontAwesome/, etc. They can be used in Vertico, the modeline, Dired buffers, etc.
+
+#+ATTR_HTML: :title All The Icons - in Dired
+[[/Emacs-Config/all-the-icons-dired.png]]
+
+#+begin_src emacs-lisp
+(use-package all-the-icons)
+
+(use-package all-the-icons-completion
+  :after (marginalia all-the-icons)
+  :hook (marginalia-mode . all-the-icons-completion-marginalia-setup)
+  :init
+  (all-the-icons-completion-mode))
+#+end_src
+
+** Vertico
+
+[[https://github.com/minad/vertico][Vertico]], short for VERTical Interactive COmpletion, improves upon the default /completion/ interface in Emacs by providing a *performant* and *minimalistic* completion UI. It enhances the /minibuffer/ interface used _throughout Emacs_ for completion.
+
+#+ATTR_HTML: :title Vertico with icons
+[[/Emacs-Config/vertico.png]]
+
+#+begin_src emacs-lisp
+(use-package vertico
+  :init
+  (vertico-mode 1)
+  :config
+  (setq vertico-count 17)
+  (setq completion-styles '(flex))
+  (setq completion-category-overrides '((file (styles . (partial-completion))))))
+#+end_src
+
+** Keybindings - General & Which-key
+
+[[https://github.com/noctuid/general.el][General]] provides a convenient, unified way to *create keybindings* in Emacs. It _integrates well_ with /Evil mode/. The =general-define-key= function allows *more flexibility* in binding keys, compared to the standard =define-key= function in GNU Emacs.
+
+[[https://github.com/justbur/emacs-which-key][Which-key]] is another package for Emacs that provides a /popup/ displaying the *available keybindings* after a _particular sequence_ of keys has been typed. It's quite useful in discovering keybindings in /different modes/ and in large keymaps.
+
+#+ATTR_HTML: :title General, along with Which-key to manage keybindings
+[[/Emacs-Config/which-key.png]]
+
+#+begin_src emacs-lisp
+(use-package general
+  :init
+  (general-evil-setup t))
+
+(use-package which-key
+  :init (which-key-mode))
+
+  #+end_src
+
+  #+begin_src emacs-lisp
+(general-define-key
+ :states '(normal visual insert emacs)
+ :keymaps 'override
+ :prefix "SPC"
+ :non-normal-prefix "C-SPC"
+ ""    '(:ignore t :which-key "Leader key")
+ "."   '(find-file :which-key "Find file")
+ "/"   '(comment-line :which-key "Comment line")
+ ","   '(consult-buffer :which-key "Switch to buffer")
+ ":"   '(eval-expression :which-key "Eval Elisp exp")
+ "RET" '(eat :which-key "Launch terminal ")
+ "f"   '(:ignore t :which-key "Files")
+ "f f" '(consult-find :which-key "Find file")
+ "f s" '(save-buffer :which-key "Save file")
+ "f d" '(delete-file :which-key "Delete file")
+ "f r" '(rename-file :which-key "Rename file")
+ "f x" '(write-and-quit :which-key "Save file and quit")
+ "q"   '(:ignore t :which-key "Quit")
+ "q q" '(save-buffers-kill-terminal :which-key "Quit")
+ "b"   '(:ignore t :which-key "Buffers")
+ "b k" '(kill-this-buffer :which-key "Kill buffer")
+ "b o" '(kill-other-buffers :which-key "Kill other buffers")
+ "b x" '(scratch :which-key "Scratch buffer")
+ "b s" '(consult-buffer :which-key "Switch to buffer")
+ "g"   '(:ignore t :which-key "Git")
+ "g g" '(magit-status :which-key "Magit")
+ "g d" '(magit-diff-unstaged :which-key "Diff")
+ "h"   '(:ignore t :which-key "Help")
+ "h f" '(helpful-function :which-key "Functions")
+ "h v" '(helpful-variable :which-key "Variables")
+ "h k" '(helpful-key :which-key "Keymaps")
+ "h b" '(describe-bindings :which-key "Bindings")
+ "h h" '(helpful-symbol :which-key "All")
+ "h i" '(info :which-key "Info")
+ "i"   '(:ignore t :which-key "Insert")
+ "i u" '(insert-char :which-key "Unicode character")
+ "i n" '(nerd-icons-insert :which-key "Nerd icon")
+ "c"   '(:ignore t :which-key "Code")
+ "c f" '(quickrun :which-key "Execute buffer")
+ "c e" '(quickrun-region :which-key "Execute selection")
+ "c o" '(org-babel-execute-src-block-maybe :which-key "Execute code block")
+ "t"   '(:ignore t :which-key "Toggle")
+ "t f" '(toggle-frame-fullscreen :which-key "Fullscreen")
+ "t l" '(display-line-numbers-mode :which-key "Line numbers")
+ "t s" '(toggle-scroll-bar :which-key "Scroll bar")
+ "t p" '(prettify-symbols-mode :which-key "Symbols")
+ "t o" '(clear-eros-overlays :which-key "Clear overlays")
+ "t n" '(normal-mode :which-key "Normal mode")
+ "t d" '(dashboard-open :which-key "Dashboard")
+ "o"   '(:ignore t :which-key "Org")
+ "o h" '(org-html-export-to-html-and-open :which-key "Open Org preview")
+ "w"   '(:ignore t :which-key "Windows")
+ "w c" '(evil-window-delete :which-key "Close window")
+ "w h" '(evil-window-left :which-key "Move to left")
+ "w l" '(evil-window-right :which-key "Move to right")
+ )
+
+(general-define-key
+ :states '(visual)
+ :keymaps 'override
+ :prefix "SPC"
+ :non-normal-prefix "C-SPC"
+ "/" '(comment-dwim :which-key "Comment region")
+ )
+
+(general-define-key
+ :states '(normal)
+ :keymaps 'override-global-map
+ "s" '(evil-avy-goto-char-timer :which-key "Hop to"))
+
+ #+end_src
+
+;; Custom functions
+(defun write-and-quit()
+  (interactive)
+  (save-some-buffers t)
+  (kill-emacs))
+
+;; Function to create numbered scratch buffers
+(defun scratch ()
+  "Create a new scratch buffer to work in"
+  (interactive)
+  (let ((n 0) bufname)
+    (while (progn
+             (setq bufname (concat "*scratch" (if (= n 0) "" (int-to-string n)) "*"))
+             (setq n (1+ n))
+             (get-buffer bufname)))
+  (switch-to-buffer (get-buffer-create bufname))
+  (if (= n 1) initial-major-mode)))
+
+;; Function to kill all other buffers
+(defun kill-other-buffers ()
+  (interactive)
+  (require 'protbuf)
+  (protect-buffer-from-kill-mode nil (get-buffer "*dashboard*")) ; protecting Dashboard buffer from SPC b o
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+
+**  Flycheck
+
+[[https://www.flycheck.org/en/latest/][Flycheck]] is a modern /on-the-fly/ *syntax checking* extension for GNU Emacs. It aims to *replace the classic Flymake*, part of GNU Emacs. It calls upon /externally installed/ *syntax* and *linting checkers* to check code as you write it.
+
+#+ATTR_HTML: :title Flycheck displaying an error in C source code
+[[/Emacs-Config/flycheck.png]]
+
+#+begin_src emacs-lisp
+(use-package flycheck
+  :init
+  (global-flycheck-mode))
+#+end_src
+
+** Magit
+
+[[https://magit.vc][Magit]] is an interface to the popular *Git* version control system. Implemented *entirely* in Emacs Lisp, it interacts with the command-line =git= program, and provides /functions/ and /keybindings/ to easily perform _almost all Git operations_ from within Emacs.
+
+#+ATTR_HTML: :title Using Magit to stage files
+[[/Emacs-Config/magit.png]]
+
+#+begin_src emacs-lisp
+(use-package magit)
+#+end_src
+
+;; Company
+(use-package company)
+(add-hook 'prog-mode-hook 'global-company-mode)
+(add-hook 'prog-mode-hook 'company-tng-mode)
+(add-hook 'prog-mode-hook 'electric-pair-mode)
+(setq company-idle-delay 0)
+(setq company-minimum-prefix-length 2)
+
+;; Company completion icons
+;; (use-package company-box
+  ;; :hook (company-mode . company-box-mode))
+
+
+;; Eglot
+(use-package eglot
+  :defer t
+  :hook (python-mode . eglot-ensure)
+  :hook (c-mode . eglot-ensure)
+  :hook (c++-mode . eglot-ensure)
+  :hook (go-mode . eglot-ensure))
+
+;; Quickrun
+(use-package quickrun)
+(use-package marginalia
+  :after vertico
+  :init
+  (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil))
+  (marginalia-mode)
+  (with-eval-after-load 'projectile
+    (add-to-list 'marginalia-command-categories '(projectile-find-file . file)))
+  )
+
+;; Org-mode
+(use-package htmlize)
+(use-package org-modern
+  :hook (org-mode . org-modern-mode)
+  :config
+  (setq org-modern-star '("✪" "✪" "✪" "✪" "✪")))
+
+(defadvice org-babel-execute-src-block (around load-language nil activate)
+  "Load language if needed"
+  (let ((language (org-element-property :language (org-element-at-point))))
+    (unless (cdr (assoc (intern language) org-babel-load-languages))
+      (add-to-list 'org-babel-load-languages (cons (intern language) t))
+      (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages))
+    ad-do-it))
+(add-hook 'org-mode-hook 'org-indent-mode)
+(setq org-src-preserve-indentation nil
+      org-src-tab-acts-natively t
+      org-edit-src-content-indentation 0
+      org-confirm-babel-evaluate nil
+      org-hide-emphasis-markers t)
+
+(org-babel-do-load-languages
+ 'org-babel-load-languages
+ '((shell . t)
+   (C . t)
+   (python . t)
+   (emacs-lisp . t)))
+;; Configuring Org exports opening in EWW
+
+(defun org-html-export-to-html-and-open ()
+  "Export the Org file to HTML and open it in EWW."
+  (interactive)
+  (let* ((org-file (buffer-file-name))
+         (html-file (concat (file-name-sans-extension org-file) ".html"))
+         (html-file-url html-file))
+    (org-export-to-file 'html html-file nil nil nil nil)
+	;; (split-window-left)
+	;; (evil-window-vsplit)
+    (eww-open-file html-file-url)))
+
+(add-hook 'org-mode-hook
+          (lambda ()
+            (local-set-key (kbd "C-c C-o") 'org-html-export-to-html-and-open)))
+
+(setq browse-url-browser-function 'eww-browse-url)
+
+;; Smooth scrolling
+(require 'pixel-scroll)
+(setq scroll-margin 1
+  scroll-step 5000
+  scroll-conservatively 100
+  scroll-preserve-screen-position 1
+  pixel-scroll-precision-use-momentum t)
+(pixel-scroll-precision-mode 1)
+(pixel-scroll-mode t)
+
+;; Helpful
+(use-package helpful)
+
+;; Rainbow brackets
+(use-package rainbow-delimiters)
+(add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
+
+;; Tree-sitter
+(use-package tree-sitter)
+(use-package tree-sitter-langs)
+(add-hook 'tree-sitter-mode-hook 'tree-sitter-hl-mode)
+(add-hook 'python-mode-hook #'tree-sitter-mode)
+(add-hook 'sh-mode-hook #'tree-sitter-mode)
+
+;; Easymotion
+(use-package evil-easymotion)
+
+;; Dashboard
+(use-package dashboard
+  :config
+  (dashboard-setup-startup-hook))
+(setq dashboard-banner-logo-title 'nil
+      dashboard-startup-banner "~/.emacs.d/pics/onedark_logo.svg"
+      dashboard-center-content t
+      dashboard-show-shortcuts nil
+      dashboard-items nil
+      dashboard-set-heading-icons t
+      dashboard-set-file-icons t
+      dashboard-set-footer nil)
+
+;; Base-16 onedark
+(use-package base16-theme
+  :ensure t)
+(load-theme 'base16-onedark t)
+
+;; Vterm
+;; (use-package vterm
+;;   :ensure t) ;; Install Cmake for compiling only
+;; (add-hook 'vterm-mode-hook(lambda() (setq buffer-face-mode-face '(:family "JetBrains Mono Nerd Font")) (buffer-face-mode))) ;; Needs JBMNF -> ttf-jetbrains-mono-nerd
+
+;; Diff HL
+(use-package diff-hl)
+(add-hook 'prog-mode-hook 'diff-hl-mode)
+(custom-set-faces
+ '(diff-hl-change ((t (:background "#61afef"))))
+ '(diff-hl-insert ((t (:background "#97c277"))))
+ '(diff-hl-delete ((t (:background "#e06c75")))))
+(diff-hl-flydiff-mode)
+(global-diff-hl-mode 1)
+(add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+
+;; Consult
+(use-package consult)
+
+;; Orderless
+(use-package orderless
+  :ensure t
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-overrides '((file (styles basic partial-completion)))))
+
+;; Eros
+(use-package eros
+  :after quickrun)
+(require 'quickrun)
+(require 'eros)
+(eros-mode 1)
+(custom-set-faces
+ '(eros-result-overlay-face ((t (:foreground "#000000" :background "#61afef"))))
+ '(eros-eval-overlay-face ((t (:background "#61afef" :foreground "#97c277"))))) ; not sure what this line does
+(defun clear-eros-overlays ()
+  (interactive)
+  (remove-overlays (point-min) (point-max)))
+
+(defun quickrun-hide-window-after-execution ()
+  (interactive)
+  (let ((win (get-buffer-window "*quickrun*")))
+    (when win
+      (delete-window win))))
+
+(defun eros-quickrun-show-overlay ()
+  (interactive)
+  (eros-mode -1)
+  (eros-mode 1)
+  ;; (kill-buffer "*quickrun*")
+  ;; (generate-new-buffer "*quickrun*")
+  (when (and quickrun--timeout-timer
+             (not (equal quickrun--timeout-timer 'ignore)))
+    (cancel-timer quickrun--timeout-timer))
+  (setq quickrun--timeout-timer
+        (run-at-time 0.5 nil
+                     (lambda ()
+                       (let ((output (with-current-buffer quickrun--buffer-name
+                                       (buffer-substring-no-properties (point-min) (point-max)))))
+                         (with-current-buffer (window-buffer (selected-window))
+                           (condition-case nil
+                               (eros--make-result-overlay output)
+                             (error (message "Error creating Eros overlay")))
+                           (with-current-buffer quickrun--buffer-name
+                             (let ((inhibit-read-only t))
+                               (erase-buffer)))))))))
+
+(setq quickrun-focus-p nil)
+(add-hook 'quickrun-after-run-hook 'eros-quickrun-show-overlay)
+(add-hook 'quickrun-after-run-hook 'clear-eros-overlays)
+(add-hook 'quickrun-after-run-hook 'quickrun-hide-window-after-execution)
+
+;; Go configuration
+(use-package go-mode)
+
+;; Arduino configuration
+(use-package arduino-mode)
+
+;; Eat (Emulate A Terminal)
+(use-package eat)
