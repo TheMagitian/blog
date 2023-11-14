@@ -14,7 +14,6 @@ color: "" #color from the theme settings
 ---
 
 * Introduction
-
 This article aims to provide the *essential* steps needed to configure [[https://gnu.org/emacs][GNU Emacs]] on your own to make it a functional *IDE*. This config is inspired by [[https://github.com/doomemacs/doomemacs][Doom Emacs]], a /configuration framework/ for GNU Emacs (Emacs in short).
 
 Emacs is configured via a language called [[https://en.wikipedia.org/wiki/Emacs_Lisp][Emacs Lisp]]. It allows Emacs to be customised to /extreme/ levels. The Emacs Lisp code blocks 
@@ -22,7 +21,11 @@ These blocks should be placed in the file located in *~/.emacs.d/init.el/* on Li
 
 This config is *declarative*, and the Emacs Lisp packages specified in this file should install automatically after installation.
 
+-----
+
 * Package management
+
+-----
 
 ** Setting the package archive
 
@@ -43,7 +46,11 @@ The code snippet given below bootstraps Use-package so that it can install and m
 (require 'use-package)                                                     ; load use-package at Emacs startup
 #+end_src
 
+-----
+
 * Generic preferences
+
+-----
 
 These are generic /tweaks/ that I like better than those in *vanilla* GNU Emacs.
 
@@ -64,7 +71,11 @@ These are generic /tweaks/ that I like better than those in *vanilla* GNU Emacs.
 (delete-selection-mode 1)      ; select text and automatically overwrite without typing backspace
 #+end_src
 
+-----
+
 * Package configuration
+
+-----
 
 Let's use /Use-package/ to manage packages *declaratively*. Here are a few packages I recommend:
 
@@ -85,7 +96,7 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 [[https://github.com/seagle0128/doom-modeline][This]] modeline is the default one used in Doom Emacs. It's /minimalistic/, and includes essential features while appearing *unique*.
 
 #+ATTR_HTML: :title Doom Modeline - https://github.com/seagle0128/doom-modeline
-[[/Emacs-Config/doom-modeline.png]]
+[[/EmacsConfig/doom-modeline.png]]
 
 #+begin_src emacs-lisp
 (use-package doom-modeline
@@ -102,7 +113,7 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 [[https://github.com/domtronn/all-the-icons.el][This]] package provides access to a *vast* set of icons from /Github Octicons/, /FontAwesome/, etc. They can be used in Vertico, the modeline, Dired buffers, etc.
 
 #+ATTR_HTML: :title All The Icons - in Dired
-[[/Emacs-Config/all-the-icons-dired.png]]
+[[/EmacsConfig/all-the-icons-dired.png]]
 
 #+begin_src emacs-lisp
 (use-package all-the-icons)
@@ -119,7 +130,7 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 [[https://github.com/minad/vertico][Vertico]], short for VERTical Interactive COmpletion, improves upon the default /completion/ interface in Emacs by providing a *performant* and *minimalistic* completion UI. It enhances the /minibuffer/ interface used _throughout Emacs_ for completion.
 
 #+ATTR_HTML: :title Vertico with icons
-[[/Emacs-Config/vertico.png]]
+[[/EmacsConfig/vertico.png]]
 
 #+begin_src emacs-lisp
 (use-package vertico
@@ -138,7 +149,7 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 [[https://github.com/justbur/emacs-which-key][Which-key]] is another package for Emacs that provides a /popup/ displaying the *available keybindings* after a _particular sequence_ of keys has been typed. It's quite useful in discovering keybindings in /different modes/ and in large keymaps.
 
 #+ATTR_HTML: :title General, along with Which-key to manage keybindings
-[[/Emacs-Config/which-key.png]]
+[[/EmacsConfig/which-key.png]]
 
 #+begin_src emacs-lisp
 (use-package general
@@ -223,37 +234,13 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 
  #+end_src
 
-;; Custom functions
-(defun write-and-quit()
-  (interactive)
-  (save-some-buffers t)
-  (kill-emacs))
-
-;; Function to create numbered scratch buffers
-(defun scratch ()
-  "Create a new scratch buffer to work in"
-  (interactive)
-  (let ((n 0) bufname)
-    (while (progn
-             (setq bufname (concat "*scratch" (if (= n 0) "" (int-to-string n)) "*"))
-             (setq n (1+ n))
-             (get-buffer bufname)))
-  (switch-to-buffer (get-buffer-create bufname))
-  (if (= n 1) initial-major-mode)))
-
-;; Function to kill all other buffers
-(defun kill-other-buffers ()
-  (interactive)
-  (require 'protbuf)
-  (protect-buffer-from-kill-mode nil (get-buffer "*dashboard*")) ; protecting Dashboard buffer from SPC b o
-  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
 
 **  Flycheck
 
-[[https://www.flycheck.org/en/latest/][Flycheck]] is a modern /on-the-fly/ *syntax checking* extension for GNU Emacs. It aims to *replace the classic Flymake*, part of GNU Emacs. It calls upon /externally installed/ *syntax* and *linting checkers* to check code as you write it.
+[[https://www.flycheck.org/en/latest/][Flycheck]] is a modern /on-the-fly/ *syntax checking* package for GNU Emacs. It aims to *replace the classic Flymake*, part of GNU Emacs. It calls upon /externally installed/ *syntax* and *linting checkers* to check code as you write it.
 
 #+ATTR_HTML: :title Flycheck displaying an error in C source code
-[[/Emacs-Config/flycheck.png]]
+[[/EmacsConfig/flycheck.png]]
 
 #+begin_src emacs-lisp
 (use-package flycheck
@@ -266,34 +253,54 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 [[https://magit.vc][Magit]] is an interface to the popular *Git* version control system. Implemented *entirely* in Emacs Lisp, it interacts with the command-line =git= program, and provides /functions/ and /keybindings/ to easily perform _almost all Git operations_ from within Emacs.
 
 #+ATTR_HTML: :title Using Magit to stage files
-[[/Emacs-Config/magit.png]]
+[[/EmacsConfig/magit.png]]
 
 #+begin_src emacs-lisp
 (use-package magit)
 #+end_src
 
-;; Company
+** Company-mode
+
+[[https://github.com/company-mode/company-mode][Company mode]] is a *text completion framework* for GNU Emacs. It uses several back- and front-ends to fetch and display completion candidates, respectively. The backends include /files/, /keywords/, etc. Company mode can be _integrated_ with *LSP clients* such as /Eglot/ to provide *autocomplete* features through a /language server/.
+
+#+ATTR_HTML: :title Company mode integration with Eglot
+[[/EmacsConfig/company-mode.png]]
+
+#+begin_src emacs-lisp
 (use-package company)
 (add-hook 'prog-mode-hook 'global-company-mode)
 (add-hook 'prog-mode-hook 'company-tng-mode)
 (add-hook 'prog-mode-hook 'electric-pair-mode)
 (setq company-idle-delay 0)
 (setq company-minimum-prefix-length 2)
-
-;; Company completion icons
-;; (use-package company-box
-  ;; :hook (company-mode . company-box-mode))
+#+end_src 
 
 
-;; Eglot
+** Eglot
+
+[[https://www.gnu.org/software/emacs/manual/html_mono/eglot.html][Eglot]] is a client for the [[https://en.wikipedia.org/wiki/Language_Server_Protocol][Language Server protocol]] in Emacs. It provides a set of /commands/ that enhance the source code editing features of GNU Emacs. Since LSP is a _standard protocol_ used in various text editors, *external programs* can be invoked to provide programming *language-agnostic* features such as definition of variables, syntax errors, etc. It serves as the *backend* for autocompletion in Company-mode.
+
+#+ATTR_HTML: :title Eglot LSP functionality
+[[/EmacsConfig/eglot.png]]
+
+#+begin_src emacs-lisp
 (use-package eglot
   :defer t
   :hook (python-mode . eglot-ensure)
   :hook (c-mode . eglot-ensure)
   :hook (c++-mode . eglot-ensure)
   :hook (go-mode . eglot-ensure))
+#+end_src
 
-;; Quickrun
+
+** Quickrun.el
+
+[[https://github.com/emacsorphanage/quickrun][Quickrun]] allows you to *execute code* in the /current/ buffer. It supports execution of both /interpreted/ and /compiled/ languages, and even some markup languages.
+
+#+ATTR_HTML: :title Quickrun executing C code - inline output display configured using Eros
+[[/EmacsConfig/quickrun.png]]
+
+#+begin_src emacs-lisp
 (use-package quickrun)
 (use-package marginalia
   :after vertico
@@ -303,8 +310,16 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
   (with-eval-after-load 'projectile
     (add-to-list 'marginalia-command-categories '(projectile-find-file . file)))
   )
+#+end_src
 
-;; Org-mode
+** Org-mode
+
+[[https://orgmode.org][Org mode]] is a powerful tool built into GNU Emacs that functions like a *markup language*, helping you maintain notes, TODO lists, etc. The simple language makes it trivial to *structure* and *organize* documents. The language is *specific* to Emacs, and is used extensively in _literate programming_ and scientific research. This document is written in Org itself, and it includes markup and *code blocks*, which can be executed directly from within Emacs.
+
+#+ATTR_HTML: :title Org document - source code of this blog
+[[/EmacsConfig/orgmode.png]]
+
+#+begin_src emacs-lisp
 (use-package htmlize)
 (use-package org-modern
   :hook (org-mode . org-modern-mode)
@@ -331,8 +346,8 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
    (C . t)
    (python . t)
    (emacs-lisp . t)))
-;; Configuring Org exports opening in EWW
 
+;; Configuring Org exports opening in EWW
 (defun org-html-export-to-html-and-open ()
   "Export the Org file to HTML and open it in EWW."
   (interactive)
@@ -340,8 +355,6 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
          (html-file (concat (file-name-sans-extension org-file) ".html"))
          (html-file-url html-file))
     (org-export-to-file 'html html-file nil nil nil nil)
-	;; (split-window-left)
-	;; (evil-window-vsplit)
     (eww-open-file html-file-url)))
 
 (add-hook 'org-mode-hook
@@ -349,35 +362,55 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
             (local-set-key (kbd "C-c C-o") 'org-html-export-to-html-and-open)))
 
 (setq browse-url-browser-function 'eww-browse-url)
+#+end_src
 
-;; Smooth scrolling
-(require 'pixel-scroll)
-(setq scroll-margin 1
-  scroll-step 5000
-  scroll-conservatively 100
-  scroll-preserve-screen-position 1
-  pixel-scroll-precision-use-momentum t)
-(pixel-scroll-precision-mode 1)
-(pixel-scroll-mode t)
+** Helpful
 
-;; Helpful
+[[https://github.com/Wilfred/helpful][Helpful]] is an Emacs package that *enhances* the builtin help menu in Emacs, by providing *more contextual* info, such as /function signature/, /documentation/, /keybindings/, etc.
+
+#+ATTR_HTML: :title Helpful's documentation interface
+[[/EmacsConfig/helpful.png]]
+
+#+begin_src emacs-lisp
 (use-package helpful)
+#+end_src
 
-;; Rainbow brackets
+** Rainbow delimiters
+
+[[https://github.com/Fanael/rainbow-delimiters][Rainbow delimiters]] provides a mode that *highlights delimiters*, such as "()" and "[]", according to their /depth/. This makes it easy to spot *matching parantheses*, brackets, etc.
+
+#+ATTR_HTML: :title Rainbow delimiters in Elisp code
+[[/EmacsConfig/rainbow-delimiters.png]]
+
+#+begin_src emacs-lisp
 (use-package rainbow-delimiters)
 (add-hook 'prog-mode-hook 'rainbow-delimiters-mode)
 
-;; Tree-sitter
+#+end_src
+
+** Tree-sitter
+
+[[https://github.com/emacs-tree-sitter/elisp-tree-sitter][This]] package integrates Emacs and [[https://tree-sitter.github.io][Tree-sitter]], an /incremental parsing/ library. It provides faster and fine-grained *syntax highlighting* in Emacs, along with /syntax trees/ for source code.
+
+#+ATTR_HTML: :title Tree-sitter's effect on syntax highlighting
+[[/EmacsConfig/tree-sitter.png]]
+
+#+begin_src emacs-lisp
 (use-package tree-sitter)
 (use-package tree-sitter-langs)
 (add-hook 'tree-sitter-mode-hook 'tree-sitter-hl-mode)
 (add-hook 'python-mode-hook #'tree-sitter-mode)
 (add-hook 'sh-mode-hook #'tree-sitter-mode)
+#+end_src
 
-;; Easymotion
-(use-package evil-easymotion)
+** Dashboard
 
-;; Dashboard
+[[https://github.com/emacs-dashboard/emacs-dashboard][Dashboard]] is an package that provides a customizable *startup screen* for GNU Emacs. It can be configured to show agenda items, bookmarks, /recently modified files/, etc.
+
+#+ATTR_HTML: :title Dashboard, with a different startup image and startup time
+[[/EmacsConfig/dashboard.png]]
+
+#+begin_src emacs-lisp
 (use-package dashboard
   :config
   (dashboard-setup-startup-hook))
@@ -389,18 +422,29 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
       dashboard-set-heading-icons t
       dashboard-set-file-icons t
       dashboard-set-footer nil)
+#+end_src
 
-;; Base-16 onedark
+** Base 16 OneDark colorscheme
+
+[[https://github.com/tinted-theming/base16-emacs][This]] package includes a collection of a large number of /standard/ themes, each comprising of *16 base colours*. Since I like the [[https://github.com/Binaryify/OneDark-Pro][OneDark]] colorscheme from the Atom text editor, I've set the base16-onedark colorscheme in Emacs too.
+
+#+ATTR_HTML: :title A few themes from the base16-emacs package
+[[/EmacsConfig/base16-onedark.png]]
+
+#+begin_src emacs-lisp
 (use-package base16-theme
   :ensure t)
 (load-theme 'base16-onedark t)
+#+end_src
 
-;; Vterm
-;; (use-package vterm
-;;   :ensure t) ;; Install Cmake for compiling only
-;; (add-hook 'vterm-mode-hook(lambda() (setq buffer-face-mode-face '(:family "JetBrains Mono Nerd Font")) (buffer-face-mode))) ;; Needs JBMNF -> ttf-jetbrains-mono-nerd
+** Diff HL
 
-;; Diff HL
+[[https://github.com/dgutov/diff-hl][Diff-HL]] is a package for GNU Emacs that provides a mode for *highlighting uncommitted changes* in version-control systems such as Git, Mercurial, etc. These are displayed in the /gutter/ region of the Emacs window.
+
+#+ATTR_HTML: :title Diff-HL showing Git status in the gutter
+[[/EmacsConfig/diff-hl.png]]
+
+#+begin_src emacs-lisp
 (use-package diff-hl)
 (add-hook 'prog-mode-hook 'diff-hl-mode)
 (custom-set-faces
@@ -411,26 +455,52 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 (global-diff-hl-mode 1)
 (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
 (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)
+#+end_src 
 
-;; Consult
+** Consult
+
+[[https://github.com/minad/consult][Consult]] is an Emacs package that provides commands to *enhance* the user's interaction with the /minibuffer/. It supports *live-previews* for currently open buffers, search within buffers, files, etc.
+
+#+ATTR_HTML: :title Consult-grep over the entire project, with live preview
+[[/EmacsConfig/consult.png]]
+
+#+begin_src emacs-lisp
 (use-package consult)
+#+end_src
 
-;; Orderless
+** Orderless
+
+[[https://github.com/oantolin/orderless][Orderless]] provides a completion style with higher /control/ and /flexibility/ over *completion*, than that provided by default in GNU Emacs. I've configured it to make /file/ autocompletion find *partial* matches.
+
+#+ATTR_HTML: :title Orderless used in Dired file matching, alongside Vertico
+[[/EmacsConfig/orderless.png]]
+
+#+begin_src emacs-lisp
 (use-package orderless
   :ensure t
   :custom
   (completion-styles '(orderless basic))
   (completion-category-overrides '((file (styles basic partial-completion)))))
+#+end_src
 
-;; Eros
+** Eros
+
+[[https://github.com/xiongtx/eros][Eros]], short for =E= valuation =R= esults =O= verlay =S=, displays results from *evaluating Emacs Lisp* code inside a /temporary annotation/ within the buffer. This is useful to display the *output* of code execution without having to switch to a /scratch/ buffer. The below code configures *Quickrun* to be a backend for Eros, which enables it to display the output of code executed in various languages.
+
+#+ATTR_HTML: :title Eros showing execution of Emacs Lisp code
+[[/EmacsConfig/eros.png]]
+
+#+begin_src emacs-lisp
 (use-package eros
   :after quickrun)
 (require 'quickrun)
 (require 'eros)
 (eros-mode 1)
+
 (custom-set-faces
  '(eros-result-overlay-face ((t (:foreground "#000000" :background "#61afef"))))
  '(eros-eval-overlay-face ((t (:background "#61afef" :foreground "#97c277"))))) ; not sure what this line does
+
 (defun clear-eros-overlays ()
   (interactive)
   (remove-overlays (point-min) (point-max)))
@@ -445,8 +515,6 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
   (interactive)
   (eros-mode -1)
   (eros-mode 1)
-  ;; (kill-buffer "*quickrun*")
-  ;; (generate-new-buffer "*quickrun*")
   (when (and quickrun--timeout-timer
              (not (equal quickrun--timeout-timer 'ignore)))
     (cancel-timer quickrun--timeout-timer))
@@ -467,12 +535,65 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 (add-hook 'quickrun-after-run-hook 'eros-quickrun-show-overlay)
 (add-hook 'quickrun-after-run-hook 'clear-eros-overlays)
 (add-hook 'quickrun-after-run-hook 'quickrun-hide-window-after-execution)
+#+end_src
 
-;; Go configuration
-(use-package go-mode)
+** Eat
 
-;; Arduino configuration
-(use-package arduino-mode)
+[[https://codeberg.org/akib/emacs-eat][Emulate A Terminal]] is a terminal emulator written *entirely* in Emacs Lisp. It's thrice as fast as /Term/, the terminal *built-in* to Emacs. It has several distinct features, such as /sixel support/, /shell integration/, etc.
 
-;; Eat (Emulate A Terminal)
+#+ATTR_HTML: :title EAT
+[[/EmacsConfig/eat.png]]
+
+#+begin_src emacs-lisp
 (use-package eat)
+#+end_src
+
+-----
+
+* Miscellaneous functions
+
+-----
+
+Given below are a few /helper/ functions for a few keybindings.
+
++ Function to write buffers and quit, with confirmation for unsaved buffers.
+#+begin_src emacs-lisp
+(defun write-and-quit()
+  (interactive)
+  (save-some-buffers t)
+  (kill-emacs))
+#+end_src
+
++ This function creates new numbered scratch buffers.
+#+begin_src emacs-lisp
+(defun scratch ()
+  "Create a new scratch buffer to work in"
+  (interactive)
+  (let ((n 0) bufname)
+    (while (progn
+             (setq bufname (concat "*scratch" (if (= n 0) "" (int-to-string n)) "*"))
+             (setq n (1+ n))
+             (get-buffer bufname)))
+  (switch-to-buffer (get-buffer-create bufname))
+  (if (= n 1) initial-major-mode)))
+#+end_src
+
++ This function kills all other buffers, while retaining just the Dashboard buffer.
+#+begin_src emacs-lisp
+(defun kill-other-buffers ()
+  (interactive)
+  (require 'protbuf)
+  (protect-buffer-from-kill-mode nil (get-buffer "*dashboard*")) ; protecting Dashboard buffer from SPC b o
+  (mapc 'kill-buffer (delq (current-buffer) (buffer-list))))
+#+end_src
+
+-----
+
+* Conclusion
+
+-----
+
+This is, /by no stretch of imagination/, an exhaustive list of Emacs packages. This configuration is merely a *starting point*. Being _highly_ customizable, you may continue to *explore*, *adapt* and create an /environment/ that best suites your workflow.
+
+-----
+-----

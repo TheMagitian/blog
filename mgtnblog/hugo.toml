@@ -12,5 +12,5 @@ pygmentsCodeFences = true
   centerTheme = true
   
 [params.logo]
-   logoText = "Magitian's blog"
+   logoText = "Magitian's blogs"
    logoHomeLink = "/"
