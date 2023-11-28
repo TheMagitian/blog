@@ -107,7 +107,6 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
   (setq doom-modeline-height 25))
 #+end_src
 
-
 ** All the icons
 
 [[https://github.com/domtronn/all-the-icons.el][This]] package provides access to a *vast* set of icons from /Github Octicons/, /FontAwesome/, etc. They can be used in Vertico, the modeline, Dired buffers, etc.
@@ -234,8 +233,7 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 
  #+end_src
 
-
-**  Flycheck
+** Flycheck
 
 [[https://www.flycheck.org/en/latest/][Flycheck]] is a modern /on-the-fly/ *syntax checking* package for GNU Emacs. It aims to *replace the classic Flymake*, part of GNU Emacs. It calls upon /externally installed/ *syntax* and *linting checkers* to check code as you write it.
 
@@ -275,7 +273,6 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 (setq company-minimum-prefix-length 2)
 #+end_src 
 
-
 ** Eglot
 
 [[https://www.gnu.org/software/emacs/manual/html_mono/eglot.html][Eglot]] is a client for the [[https://en.wikipedia.org/wiki/Language_Server_Protocol][Language Server protocol]] in Emacs. It provides a set of /commands/ that enhance the source code editing features of GNU Emacs. Since LSP is a _standard protocol_ used in various text editors, *external programs* can be invoked to provide programming *language-agnostic* features such as definition of variables, syntax errors, etc. It serves as the *backend* for autocompletion in Company-mode.
@@ -291,7 +288,6 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
   :hook (c++-mode . eglot-ensure)
   :hook (go-mode . eglot-ensure))
 #+end_src
-
 
 ** Quickrun.el
 
@@ -549,6 +545,7 @@ Let's use /Use-package/ to manage packages *declaratively*. Here are a few packa
 #+end_src
 
 -----
+
 
 * Miscellaneous functions
 
